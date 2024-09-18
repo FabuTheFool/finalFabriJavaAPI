@@ -8,8 +8,15 @@ import java.util.List;
 
 @ApplicationScoped
 public class PresupuestoRepository implements PanacheRepository<Presupuesto> {
-    
-    public List<Presupuesto> findByMontoBetween(Double rangoInicial, Double rangoFinal) {
-        return find("montoPresupuestado BETWEEN ?1 AND ?2", rangoInicial, rangoFinal).list();
+
+    public Double findMaxMonto() {
+        // Asegúrate de que el tipo de retorno sea Double
+        return getEntityManager()
+            .createQuery("SELECT MAX(p.monto) FROM Presupuesto p", Double.class)
+            .getSingleResult();
+    }
+
+    public List<Presupuesto> findPresupuestosWithMaxMonto(Double maxMonto) {
+        return find("SELECT p FROM Presupuesto p WHERE p.monto = ?1", maxMonto).list();
     }
 }
